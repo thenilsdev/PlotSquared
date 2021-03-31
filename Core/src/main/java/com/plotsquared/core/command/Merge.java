@@ -144,6 +144,14 @@ public class Merge extends SubCommand {
         final double price = priceExr == null ? 0d : priceExr.evaluate((double) size);
 
         UUID uuid = player.getUUID();
+        if (!force && !plot.isOwner(uuid)) {
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_MERGE)) {
+                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                return false;
+            } else {
+                uuid = plot.getOwnerAbs();
+            }
+        }
         if (direction == Direction.ALL) {
             boolean terrain = true;
             if (args.length == 2) {
@@ -165,14 +173,6 @@ public class Merge extends SubCommand {
             }
             MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
             return false;
-        }
-        if (!force && !plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_MERGE)) {
-                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
-                return false;
-            } else {
-                uuid = plot.getOwnerAbs();
-            }
         }
         if (!force && EconHandler.getEconHandler() != null && plotArea.useEconomy() && price > 0d
             && EconHandler.getEconHandler().getMoney(player) < price) {
